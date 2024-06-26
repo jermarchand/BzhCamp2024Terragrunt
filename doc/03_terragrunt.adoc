@@ -1,0 +1,182 @@
+= Terragrunt 
+
+[#logo-terragrung]
+== image:images/terragrung.png[] Terragrunt 
+
+[%step]
+* gruntwork.io
+* OpenSource
+* Wrapper Terraform
+
+== Proposition
+
+image::images/key-features-terraform-code-dry.png[]
+
+== Concepts
+
+[%step]
+* DRY Code
+* DRY Backend
+* DRY configuration
+
+== Arboresence - Environements
+
+[source]
+--
+└── environements
+    ├── prod
+    │   ├── app-1
+    │   │   └── terragrunt.hcl
+    │   └── app-2
+    │       └── terragrunt.hcl
+    ├── qa
+    │   ├── app-1
+    │   │   └── terragrunt.hcl
+    │   └── app-2
+    │       └── terragrunt.hcl
+    └── stage
+        ├── app-1
+        │   └── terragrunt.hcl
+        └── app-2
+            └── terragrunt.hcl
+--
+
+== Arboresence - Modules
+
+[source]
+--
+└── modules
+    ├── app-1
+    │   └── main.tf
+    └── app-2
+        └── main.tf
+--
+
+[%step]
+les modules peuvent être dans des repos Git ou registry Terraform.
+
+== Arboresence - Feuilles
+
+Le fichier `terragrunt.hcl`
+
+[source,java]
+--
+terraform {
+  source = "<path to module local ou remote>"
+}
+
+inputs = {
+  input_1 = "value_1"
+  input_2 = "value_2"
+}
+--
+
+[%step]
+Remonter l'arbrorescence pour trouver la racine
+[%step]
+[source, java]
+--
+include {
+  path = find_in_parent_folders()
+}
+--
+
+== Arboresence - Root
+
+Dans le `terragrunt.hcl` root
+
+[source, java]
+--
+locals {
+  ...
+}
+inputs {
+  ...
+}
+generate "XXXXXX" {
+  ...
+}
+remote_state {
+  ...
+}
+--
+
+== Locals
+[source]
+--
+└── environements
+    ├── prod
+    │   └── env.hcl
+    ├── qa
+    │   └── env.hcl
+    └── stage
+        └── env.hcl
+--
+
+Dans le `terragrunt.hcl` root
+[source,java]
+--
+locals {
+  environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+}
+
+inputs = merge(
+  local.environment_vars.locals,
+)
+--
+
+== Generation de fichiers
+
+[source,java]
+--
+generate "provider" {
+  path = "provider.tf"
+  if_exists = "overwrite_terragrunt"
+  contents = <<EOF
+provider "aws" {
+  region = "us-east-1"
+}
+EOF
+}
+--
+
+== Remote State
+a
+
+[source,java]
+--
+remote_state {
+  backend = "s3"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+  config = {
+    bucket = "my-terraform-state"
+
+    key = "${path_relative_to_include()}/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "my-lock-table"
+  }
+}
+--
+
+== CLI
+
+Commandes `terragrunt`
+[Source, bash]
+----
+terragrunt hclfmt
+terragrunt run-all <terraform command>
+terragrunt show
+----
+
+Wrapper `terraform`
+[Source, bash]
+----
+terragrunt init
+terragrunt plan
+terragrunt apply
+----
+

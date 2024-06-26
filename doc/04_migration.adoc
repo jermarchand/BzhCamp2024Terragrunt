@@ -1,0 +1,73 @@
+= Migration vers Terragrunt
+
+== Itération 3
+
+* Utilisation de Terragrunt
+
+
+== Avantages
+
+* Pas de répétition
+* tfstate par configuration
+* Backend dédiés
+* Cycle de vie / promotion
+* version des modules
+
+== Inconvénients et limites
+
+* HCL
+* Lisibilité
+
+[.columns]
+== Rex - Arborescence
+
+[.column]
+--
+[source]
+----
+└─ environements
+  └─ prod / int / dev
+    └─ us / eu
+      └─ client
+        └─ apps
+          └─ terragrunt.hcl
+----
+[source]
+----
+└─ environements
+  └─ us / eu
+    └─ prod / int / dev
+      └─ client
+        └─ apps
+          └─ terragrunt.hcl
+----
+--
+
+[.column]
+--
+[source]
+----
+└─ environements
+  └─ client
+    └─ prod / int / dev
+      └─ us / eu
+        └─ apps
+          └─ terragrunt.hcl       
+----
+[source]
+----
+└─ environements
+  └─ client
+    └─ us / eu
+      └─ prod / int / dev
+        └─ apps
+          └─ terragrunt.hcl
+----
+--
+
+== Rex
+
+[%step]
+* Migration
+* Mise en place d'un Pipeline unique
+* Landing Zone

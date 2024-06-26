@@ -1,0 +1,10 @@
+node_modules
+.asciidoctor
+
+.terraform
+.terraform.lock.hcl
+tfplan
+.terragrunt
+.terragrunt-cache
+
+demo/04-backup

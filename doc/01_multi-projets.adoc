@@ -1,0 +1,23 @@
+= Multi-projets pour gérer le multi-env
+
+== Itération 1
+
+* Un projet par environment et application
+
+== Avantages
+
+* Lisible
+* tfstate par projet
+* Backend dédiés
+
+== Inconvénients et limites
+
+* Beaucoup de répétition
+* Cycle de vie / promotion
+
+== Rex
+
+[%step]
+* Trop de projets git
+* Pas d'uniformisation
+* Pas de cycle de vie globale

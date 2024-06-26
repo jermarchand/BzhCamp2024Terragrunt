@@ -1,0 +1,7 @@
+= Merci
+
+[%notitle]
+== Zenika
+
+[.stretch]
+image::images/Zenika.jpeg[]

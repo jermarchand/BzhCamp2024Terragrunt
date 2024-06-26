@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: minio
+  labels:
+    name: minio
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: minio-app
+  name: minio-app
+  namespace: minio # Change this value to match the namespace metadata.name
+spec:
+  containers:
+  - name: minio
+    image: quay.io/minio/minio:RELEASE.2023-04-07T05-28-58Z
+    command:
+    - /bin/bash
+    - -c
+    args: 
+    - minio server /data --console-address :9001
+    volumeMounts:
+    - mountPath: /data
+      name: localvolume # Corresponds to the `spec.volumes` Persistent Volume
+    ports:
+      - containerPort: 9000
+        hostPort: 9000
+      - containerPort: 9001
+        hostPort: 9001
+    env:
+      - name: BASE_HREF
+        value: /minio/
+  volumes:
+  - name: localvolume
+    hostPath: # MinIO generally recommends using locally-attached volumes
+      path: /home/jerome/github/data/minio # Specify a path to a local drive or volume on the Kubernetes worker node
+      type: DirectoryOrCreate # The path to the last directory must exist
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minio-ingress
+  namespace: kube-system
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: minio-ui.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minio-app
+                port:
+                  number: 9000
+    - host: minio-console.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minio-app
+                port:
+                  number: 9001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-app
+  namespace: kube-system
+spec:
+  type: ExternalName
+  externalName: minio-app.minio.svc.cluster.local
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-app
+  namespace: minio 
+spec:
+  selector:
+    app: minio-app
+  type: NodePort
+  ports:
+    - name: "ui-address"
+      port: 9000
+      targetPort: 9000
+      protocol: TCP
+    - name: "console-address"
+      port: 9001
+      targetPort: 9001
+      protocol: TCP
