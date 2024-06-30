@@ -1,0 +1,12 @@
+= Démo 2
+
+En partant du répertoire de démo 01 :
+
+* séparation des resources dans des fichiers différents
+* nouvelle variable `var.service_port`
+* correction du validateur de la variable `type_env`
+* Création de `app1-int` et `app1-prd` par recopie de `app1-dev`
+* Pour chacun
+** renomage des resources `dev` par `int` ou `prd`
+** Pour les backend, renomage des `key` dans le bucket s3
+** Ajout fichier `terraform.tfvars`

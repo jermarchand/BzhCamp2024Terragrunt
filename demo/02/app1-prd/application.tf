@@ -1,8 +1,8 @@
 
-resource "kubernetes_deployment" "app1_dev" {
+resource "kubernetes_deployment" "app1_prd" {
   metadata {
-    name      = "app1-dev"
-    namespace = kubernetes_namespace.app1_dev.metadata.0.name
+    name      = "app1-prd"
+    namespace = kubernetes_namespace.app1_prd.metadata[0].name
   }
   spec {
     replicas = 1
@@ -32,14 +32,14 @@ resource "kubernetes_deployment" "app1_dev" {
   }
 }
 
-resource "kubernetes_service" "app1_dev" {
+resource "kubernetes_service" "app1_prd" {
   metadata {
-    name      = "app1-dev"
-    namespace = kubernetes_namespace.app1_dev.metadata.0.name
+    name      = "app1-prd"
+    namespace = kubernetes_namespace.app1_prd.metadata[0].name
   }
   spec {
     selector = {
-      app = kubernetes_deployment.app1_dev.spec.0.template.0.metadata.0.labels.app
+      app = kubernetes_deployment.app1_prd.spec[0].template[0].metadata[0].labels.app
     }
     type = "NodePort"
     port {
