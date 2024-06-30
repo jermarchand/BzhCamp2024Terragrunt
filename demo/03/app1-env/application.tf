@@ -2,7 +2,7 @@
 resource "kubernetes_deployment" "app1_env" {
   metadata {
     name      = "app1-${var.env_type}"
-    namespace = kubernetes_namespace.app1_env.metadata.0.name
+    namespace = kubernetes_namespace.app1_env.metadata[0].name
   }
   spec {
     replicas = var.nb_replicats
@@ -35,11 +35,11 @@ resource "kubernetes_deployment" "app1_env" {
 resource "kubernetes_service" "app1_env" {
   metadata {
     name      = "app1-${var.env_type}"
-    namespace = kubernetes_namespace.app1_env.metadata.0.name
+    namespace = kubernetes_namespace.app1_env.metadata[0].name
   }
   spec {
     selector = {
-      app = kubernetes_deployment.app1_env.spec.0.template.0.metadata.0.labels.app
+      app = kubernetes_deployment.app1_env.spec[0].template[0].metadata[0].labels.app
     }
     type = "NodePort"
     port {

@@ -1,7 +1,6 @@
 variable "env_type" {
   description = "Type d'environement"
   type        = string
-  default     = "dev"
 
   validation {
     condition     = contains(["dev", "int", "prd"], var.env_type)
