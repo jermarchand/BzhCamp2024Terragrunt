@@ -14,7 +14,7 @@ resource "kubernetes_namespace" "app1_dev" {
 
 resource "kubernetes_deployment" "app1_dev" {
   metadata {
-    name = "app1-dev"
+    name      = "app1-dev"
     namespace = kubernetes_namespace.app1_dev.metadata.0.name
   }
   spec {
@@ -27,15 +27,16 @@ resource "kubernetes_deployment" "app1_dev" {
     template {
       metadata {
         labels = {
-          app = "MyTestApp"
+          app      = "MyTestApp"
           password = var.env_type
         }
       }
       spec {
         container {
           image_pull_policy = "IfNotPresent"
-          image = "traefik/whoami"
-          name  = "whoami-container"
+          image             = "traefik/whoami"
+          name              = "whoami-container"
+          
           port {
             container_port = 80
           }
@@ -47,7 +48,7 @@ resource "kubernetes_deployment" "app1_dev" {
 
 resource "kubernetes_service" "app1_dev" {
   metadata {
-    name = "app1-dev"
+    name      = "app1-dev"
     namespace = kubernetes_namespace.app1_dev.metadata.0.name
   }
   spec {
@@ -56,29 +57,29 @@ resource "kubernetes_service" "app1_dev" {
     }
     type = "NodePort"
     port {
-      node_port = 30201
-      port = 80
+      node_port   = 30201
+      port        = 80
       target_port = 80
     }
   }
 }
 
 resource "random_string" "random" {
-  count = var.env_type == "dev" ? 1 : 0
+  count   = var.env_type == "dev" ? 1 : 0
   length  = 10
   special = false
-  lower = true
+  lower   = true
   numeric = false
-  upper = true
+  upper   = true
 }
 
 variable "env_type" {
   description = "Type d'environement"
-  type = string
-  default   = "dev"
+  type        = string
+  default     = "dev"
 
   validation {
-    condition   = contains(["dev", "ppr", "prd"], var.env_type)
+    condition     = contains(["dev", "ppr", "prd"], var.env_type)
     error_message = "Mauvaise valeur"
   }
 }
@@ -100,7 +101,7 @@ terraform {
 
   backend "s3" {
     bucket = "tf-backends"
-    key  = "app1-dev-terraform.tfstate"
+    key    = "app1-dev-terraform.tfstate"
 
     endpoints = {
       s3 = "http://minio-ui.test"
@@ -109,11 +110,11 @@ terraform {
     access_key = "FLVqceSq1cv7YgOS"
     secret_key = "tGb5kZGn7B3VcKfyGnaLiqbtPjlwFXPm"
 
-    region               = "main"
+    region                      = "main"
     skip_credentials_validation = true
-    skip_metadata_api_check   = true
-    skip_region_validation = true
+    skip_metadata_api_check     = true
+    skip_region_validation      = true
     skip_requesting_account_id  = true
-    force_path_style     = true
+    force_path_style            = true
   }
 }

@@ -1,0 +1,4 @@
+= Démo 1
+
+* explication des différentes ressources
+* `terraform fmt` permet de mettre en forme le fichier
